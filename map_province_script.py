@@ -49,7 +49,7 @@ raw = province_csv()
 
 raw['text'] = raw['denominazione_provincia'] + '<br>Totale Casi ' + (raw['totale_casi']).astype(str)
 limits = [(0,50),(50,100),(100,200),(200,300),(300,3000)]
-colors = ["#e377c2", "orange", "lightseagreen", "crimson", "royalblue"]
+colors = ["lightseagreen","royalblue", "#e377c2", "orange", "crimson"]
 cities = []
 scale = 2
 
