@@ -37,7 +37,7 @@ def province_json():
     return tutti
 
 def province_csv():
-    grezzi = pd.read_csv("https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-province/dpc-covid19-ita-province-20200312.csv", encoding = "ISO-8859-1")
+    grezzi = pd.read_csv("https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-province/dpc-covid19-ita-province-20200314.csv", encoding = "ISO-8859-1")
     tutti = grezzi.iloc[-128:]
     indexNames = tutti[ tutti['lat'] == 0 ].index
     tutti.drop(indexNames , inplace=True)
@@ -45,23 +45,11 @@ def province_csv():
 
 
 #%%
-
-username = 'francesco.mttl' 
-api_key = '9cvu6g984JPPaBVpzC6k' # your api key - go to profile > settings > regenerate key
-chart_studio.tools.set_credentials_file(username=username, api_key=api_key)
-
-
-
-
-
-
-
-#%%
 raw = province_csv()
 
 raw['text'] = raw['denominazione_provincia'] + '<br>Totale Casi ' + (raw['totale_casi']).astype(str)
 limits = [(0,50),(50,100),(100,200),(200,300),(300,3000)]
-colors = ["lightgrey", "orange", "lightseagreen", "crimson", "royalblue"]
+colors = ["#e377c2", "orange", "lightseagreen", "crimson", "royalblue"]
 cities = []
 scale = 2
 
@@ -105,11 +93,8 @@ fig.update_layout(width=800,  height=1000, autosize=True, showlegend = True,
                   template = "plotly_white",
                   xaxis={"visible": False}, 
                   yaxis={"visible": False})
-plot(fig)
 
-
-
-pio.write_html(fig, file="index.html", auto_open=True)
+plot(fig, filename='map_province.html')
 
 
 
