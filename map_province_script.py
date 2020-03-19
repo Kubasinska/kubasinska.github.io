@@ -14,8 +14,6 @@ import plotly.express as px
 from scipy import stats
 import json
 import urllib.request
-import chart_studio
-import chart_studio.plotly as py
 import plotly.io as pio
 
 
@@ -25,7 +23,7 @@ def datiregioni_csv(mm,gg):
     return grezzi
 
 
-def regioni_json():
+def andamento_json():
     grezzi = pd.read_json("https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-json/dpc-covid19-ita-andamento-nazionale.json")
     return grezzi
 
@@ -37,7 +35,7 @@ def province_json():
     return tutti
 
 def province_csv():
-    grezzi = pd.read_csv("https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-province/dpc-covid19-ita-province-20200314.csv", encoding = "ISO-8859-1")
+    grezzi = pd.read_csv("https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-province/dpc-covid19-ita-province-20200318.csv", encoding = "ISO-8859-1")
     tutti = grezzi.iloc[-128:]
     indexNames = tutti[ tutti['lat'] == 0 ].index
     tutti.drop(indexNames , inplace=True)
@@ -46,9 +44,10 @@ def province_csv():
 
 #%%
 raw = province_csv()
+raw_and = andamento_json()
 
 raw['text'] = raw['denominazione_provincia'] + '<br>Totale Casi ' + (raw['totale_casi']).astype(str)
-limits = [(0,50),(50,100),(100,200),(200,300),(300,3000)]
+limits = [(0,50),(50,100),(100,200),(200,300),(300,5000)]
 colors = ["lightseagreen","royalblue", "#e377c2", "orange", "crimson"]
 cities = []
 scale = 2
@@ -75,8 +74,18 @@ for  feature in jdata['features']:
     #else: raise ValueError("geometry type irrelevant for map")
 x, y = zip(*pts)  
 
-fig = go.Figure()
-fig.add_scatter(x=x, y=y, mode='lines', line_color='#999999', line_width=1.5, showlegend=False)
+#%%
+
+fig = make_subplots(rows=1, cols=2, 
+                    vertical_spacing=0.019, 
+                    specs=[[{"type": "scatter"},{"type": "scatter"}]], subplot_titles=("Unemployment rate"))
+
+
+
+
+
+
+fig.add_trace(go.Scatter(x=x, y=y, mode='lines', line_color='#999999', line_width=1.5, showlegend=False), row=1, col=1)
 
 for i in range(len(limits)):
     lim = limits[i]
@@ -87,9 +96,12 @@ for i in range(len(limits)):
         text = df_sub['text'],
         mode='markers',
         marker = dict(size=df_sub['totale_casi']/scale,color = colors[i],sizemode = 'area'),
-        name = '{0} - {1}'.format(lim[0],lim[1])))
+        name = '{0} - {1}'.format(lim[0],lim[1])), row=1, col=1)
+    
 
-fig.update_layout(width=800,  height=1000, autosize=True, showlegend = True, 
+fig.add_trace(go.Scatter(x=raw_and.data,y=raw_and.totale_casi,name="totale casi",line=dict(width=1.8)), row=1, col=2)
+
+fig.update_layout(width=1800,  height=1000, autosize=True, showlegend = True, 
                   template = "plotly_white",
                   xaxis={"visible": False}, 
                   yaxis={"visible": False})
