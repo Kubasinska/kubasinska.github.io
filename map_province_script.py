@@ -72,17 +72,15 @@ for  feature in jdata['features']:
         points.append([None, None])
     else: pass           
     #else: raise ValueError("geometry type irrelevant for map")
+
 x, y = zip(*pts)  
 
 #%%
 
-fig = make_subplots(rows=1, cols=2, 
+fig = make_subplots(rows=2, cols=1,
                     vertical_spacing=0.019, 
-                    specs=[[{"type": "scatter"},{"type": "scatter"}]], subplot_titles=("Unemployment rate"))
-
-
-
-
+                    specs=[[{"type": "scatter"}],
+                           [{"type": "scatter"}]], subplot_titles=(""))
 
 
 fig.add_trace(go.Scatter(x=x, y=y, mode='lines', line_color='#999999', line_width=1.5, showlegend=False), row=1, col=1)
@@ -99,9 +97,9 @@ for i in range(len(limits)):
         name = '{0} - {1}'.format(lim[0],lim[1])), row=1, col=1)
     
 
-fig.add_trace(go.Scatter(x=raw_and.data,y=raw_and.totale_casi,name="totale casi",line=dict(width=1.8)), row=1, col=2)
+fig.add_trace(go.Scatter(x=raw_and.data,y=raw_and.totale_casi,name="totale casi",line=dict(width=1.8)), row=2, col=1)
 
-fig.update_layout(width=1800,  height=1000, autosize=True, showlegend = True, 
+fig.update_layout(width=1000,  height=1800, autosize=True, showlegend = True,
                   template = "plotly_white",
                   xaxis={"visible": False}, 
                   yaxis={"visible": False})
