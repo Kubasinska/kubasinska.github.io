@@ -139,7 +139,7 @@ for i in range(len(limits_regioni)):
         name='{0} - {1}'.format(lim[0], lim[1])), row=1, col=1)
 
 
-fig.update_layout(width=1200,  height=1800, autosize=True, showlegend = True, template = "plotly_white", xaxis={"visible": False}, yaxis={"visible": False})
+fig.update_layout(width=800,  height=1200, autosize=True, showlegend = True, template = "plotly_white", xaxis={"visible": False}, yaxis={"visible": False})
 
 fig.add_trace(go.Scatter(x=df_andamento["data"], y= df_andamento["totale_casi"], mode='lines', line_width=1.5), row=2, col=1)
 
