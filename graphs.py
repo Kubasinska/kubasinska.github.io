@@ -40,16 +40,57 @@ raw_prov = province_csv()
 raw_anda = andamento_json()
 raw_reg = datiregioni_csv("03","25")
 
+raw_reg.sort_values('totale_casi', axis=0, inplace=True, ascending=False)
+
 #%%
 #Plotto
+fig = make_subplots(rows=2, cols=1, 
+                    vertical_spacing=0.15,
+                    specs=[[{"type": "bar"}],
+                           [{"type": "scatter"}]],
+                    subplot_titles=("Casi Attivi", "Andamenti"))
 
-import plotly.graph_objects as go
-import numpy as np
+fig.add_trace(go.Bar(name='Deceduti', x=raw_reg["denominazione_regione"], y=raw_reg["deceduti"]), row=1, col=1)
+fig.add_trace(go.Bar(name='Casi attivi', x=raw_reg["denominazione_regione"],
+                     y=(raw_reg["totale_casi"]-raw_reg["deceduti"])-raw_reg["dimessi_guariti"],
+                     text = (raw_reg["totale_casi"]-raw_reg["deceduti"])-raw_reg["dimessi_guariti"]), row=1, col=1)
 
-fig = go.Figure(go.Histogram(x=raw_reg["denominazione_regione"], y=raw_reg["totale_casi"]))
+fig.update_traces(textposition='outside')
 
-fig.add_trace(go.Histogram(x=raw_reg["denominazione_regione"], y=raw_reg["deceduti"]))
+fig.add_trace(go.Scatter(
+                x=raw_anda.data,
+                y=raw_anda['totale_ospedalizzati'],
+                name="Ospedalizzati",
+                line=dict(color='#ABD71F', width=4),
+                opacity=0.8), row=2, col=1)
 
-fig.update_layout(barmode="overlay",bargap=0.1)
+fig.add_trace(go.Scatter(
+                x=raw_anda.data,
+                y=raw_anda['terapia_intensiva'],
+                name="Ricoverati in terapia intensiva",
+                line=dict(color='#1FD7A7', width=4),
+                opacity=0.8), row=2, col=1)
 
-plot(fig)
+fig.add_trace(go.Scatter(
+                x=raw_anda.data,
+                y=raw_anda['isolamento_domiciliare'],
+                name="Isolamento domiciliare",
+                line=dict(color='#4B1FD7', width=4),
+                opacity=0.8), row=2, col=1)
+
+fig.add_trace(go.Scatter(
+                x=raw_anda.data,
+                y=raw_anda['dimessi_guariti'],
+                name="Dimessi guariti",
+                line=dict(color='#D71F4F', width=4),
+                opacity=0.8), row=2, col=1)
+
+# Use date string to set xaxis range
+fig.update_layout(xaxis_range=[raw_anda.data.iloc[0],raw_anda.data.iloc[-1]])
+
+
+
+fig.update_layout(barmode='stack')
+fig.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')
+plot(fig, filename="reg_bar")
+
