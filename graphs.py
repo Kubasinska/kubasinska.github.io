@@ -38,7 +38,7 @@ def province_csv():
 #%%
 raw_prov = province_csv()
 raw_anda = andamento_json()
-raw_reg = datiregioni_csv("03","25")
+raw_reg = datiregioni_csv("03","27")
 
 raw_reg.sort_values('totale_casi', axis=0, inplace=True, ascending=False)
 
@@ -91,6 +91,6 @@ fig.update_layout(xaxis_range=[raw_anda.data.iloc[0],raw_anda.data.iloc[-1]])
 
 
 fig.update_layout(barmode='stack')
-fig.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')
+fig.update_layout(uniformtext_minsize=8, uniformtext_mode='hide', showlegend=False)
 plot(fig, filename="reg_bar")
 
